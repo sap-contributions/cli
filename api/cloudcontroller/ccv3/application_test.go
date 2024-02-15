@@ -450,6 +450,7 @@ var _ = Describe("Application", func() {
 				filters = []Query{
 					{Key: SpaceGUIDFilter, Values: []string{"some-space-guid"}},
 					{Key: NameFilter, Values: []string{"some-app-name"}},
+					{Key: PerPage, Values: []string{"5000"}},
 				}
 			})
 

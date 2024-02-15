@@ -85,6 +85,7 @@ func (actor Actor) GetRoutesBySpace(spaceGUID string, labelSelector string) ([]r
 	allWarnings := Warnings{}
 	queries := []ccv3.Query{
 		ccv3.Query{Key: ccv3.SpaceGUIDFilter, Values: []string{spaceGUID}},
+		ccv3.Query{Key: ccv3.PerPage, Values: []string{ccv3.MaxPerPage}},
 	}
 	if len(labelSelector) > 0 {
 		queries = append(queries, ccv3.Query{Key: ccv3.LabelSelectorFilter, Values: []string{labelSelector}})
@@ -190,6 +191,7 @@ func (actor Actor) GetRoutesByOrg(orgGUID string, labelSelector string) ([]resou
 	allWarnings := Warnings{}
 	queries := []ccv3.Query{
 		ccv3.Query{Key: ccv3.OrganizationGUIDFilter, Values: []string{orgGUID}},
+		ccv3.Query{Key: ccv3.PerPage, Values: []string{ccv3.MaxPerPage}},
 	}
 	if len(labelSelector) > 0 {
 		queries = append(queries, ccv3.Query{Key: ccv3.LabelSelectorFilter, Values: []string{labelSelector}})

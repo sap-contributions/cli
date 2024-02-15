@@ -87,6 +87,7 @@ var _ = Describe("Package Actions", func() {
 				Expect(fakeCloudControllerClient.GetApplicationsArgsForCall(0)).To(ConsistOf(
 					ccv3.Query{Key: ccv3.NameFilter, Values: []string{"some-app-name"}},
 					ccv3.Query{Key: ccv3.SpaceGUIDFilter, Values: []string{"some-space-guid"}},
+					ccv3.Query{Key: ccv3.PerPage, Values: []string{ccv3.MaxPerPage}},
 				))
 
 				Expect(fakeCloudControllerClient.GetPackagesCallCount()).To(Equal(1))

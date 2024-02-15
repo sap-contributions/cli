@@ -13,7 +13,8 @@ type AppsCommand struct {
 	usage           interface{} `usage:"CF_NAME apps [--labels SELECTOR]\n\nEXAMPLES:\n   CF_NAME apps\n   CF_NAME apps --labels 'environment in (production,staging),tier in (backend)'\n   CF_NAME apps --labels 'env=dev,!chargeback-code,tier in (backend,worker)'"`
 	relatedCommands interface{} `related_commands:"events, logs, map-route, push, scale, start, stop, restart"`
 
-	Labels string `long:"labels" description:"Selector to filter apps by labels"`
+	Labels  string `long:"labels" description:"Selector to filter apps by labels"`
+	NoStats bool   `long:"no-stats" description:"Do not fetch and print process stats"`
 }
 
 func (cmd AppsCommand) Execute(args []string) error {
@@ -34,7 +35,7 @@ func (cmd AppsCommand) Execute(args []string) error {
 	})
 	cmd.UI.DisplayNewline()
 
-	summaries, warnings, err := cmd.Actor.GetAppSummariesForSpace(cmd.Config.TargetedSpace().GUID, cmd.Labels)
+	summaries, warnings, err := cmd.Actor.GetAppSummariesForSpace(cmd.Config.TargetedSpace().GUID, cmd.Labels, cmd.NoStats)
 	cmd.UI.DisplayWarnings(warnings)
 	if err != nil {
 		return err

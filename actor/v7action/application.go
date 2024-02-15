@@ -90,6 +90,7 @@ func (actor Actor) GetApplicationsByGUIDs(appGUIDs []string) ([]resources.Applic
 	warnings, err := batcher.RequestByGUID(appGUIDs, func(guids []string) (ccv3.Warnings, error) {
 		batch, warnings, err := actor.CloudControllerClient.GetApplications(
 			ccv3.Query{Key: ccv3.GUIDFilter, Values: guids},
+			ccv3.Query{Key: ccv3.PerPage, Values: []string{ccv3.MaxPerPage}},
 		)
 		apps = append(apps, batch...)
 		return warnings, err
@@ -112,6 +113,7 @@ func (actor Actor) GetApplicationsByNamesAndSpace(appNames []string, spaceGUID s
 	apps, warnings, err := actor.CloudControllerClient.GetApplications(
 		ccv3.Query{Key: ccv3.NameFilter, Values: appNames},
 		ccv3.Query{Key: ccv3.SpaceGUIDFilter, Values: []string{spaceGUID}},
+		ccv3.Query{Key: ccv3.PerPage, Values: []string{ccv3.MaxPerPage}},
 	)
 
 	if err != nil {
