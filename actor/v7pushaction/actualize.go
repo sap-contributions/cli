@@ -6,6 +6,7 @@ import (
 
 func (actor Actor) Actualize(plan PushPlan, progressBar ProgressBar) <-chan *PushEvent {
 	log.Debugln("Starting to Actualize Push plan:", plan)
+	log.Warnln("Begin to actualize lifecycle:", plan.Application.LifecycleType)
 	eventStream := make(chan *PushEvent)
 
 	go func() {
@@ -16,6 +17,7 @@ func (actor Actor) Actualize(plan PushPlan, progressBar ProgressBar) <-chan *Pus
 		var warnings Warnings
 		for _, changeAppFunc := range actor.ChangeApplicationSequence(plan) {
 			plan, warnings, err = changeAppFunc(plan, eventStream, progressBar)
+			log.Warnf("lifecycle in plan: %q", plan.Application.LifecycleType)
 			eventStream <- &PushEvent{Plan: plan, Err: err, Warnings: warnings}
 			if err != nil {
 				return

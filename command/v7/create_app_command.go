@@ -1,6 +1,8 @@
 package v7
 
 import (
+	"fmt"
+
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/flag"
@@ -11,8 +13,8 @@ type CreateAppCommand struct {
 	BaseCommand
 
 	RequiredArgs    flag.AppName `positional-args:"yes"`
-	AppType         flag.AppType `long:"app-type" choice:"buildpack" choice:"docker" description:"App lifecycle type to stage and run the app" default:"buildpack"`
-	usage           interface{}  `usage:"CF_NAME create-app APP_NAME [--app-type (buildpack | docker)]"`
+	AppType         flag.AppType `long:"app-type" choice:"buildpack" choice:"docker" choice:"cnb" description:"App lifecycle type to stage and run the app" default:"buildpack"`
+	usage           interface{}  `usage:"CF_NAME create-app APP_NAME [--app-type (buildpack | docker | cnb)]"`
 	relatedCommands interface{}  `related_commands:"app, apps, push"`
 }
 
@@ -33,6 +35,8 @@ func (cmd CreateAppCommand) Execute(args []string) error {
 		"CurrentOrg":   cmd.Config.TargetedOrganization().Name,
 		"CurrentUser":  user.Name,
 	})
+
+	cmd.UI.DisplayText(fmt.Sprintf("Using app type %q", constant.AppLifecycleType(cmd.AppType)))
 
 	_, warnings, err := cmd.Actor.CreateApplicationInSpace(
 		resources.Application{

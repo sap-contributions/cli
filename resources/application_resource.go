@@ -56,6 +56,8 @@ func (a Application) MarshalJSON() ([]byte, error) {
 				ccApp.setBuildpackLifecycle(a)
 			}
 		}
+	} else if a.LifecycleType == constant.AppLifecycleTypeCNB {
+		ccApp.setCNBLifecycle()
 	}
 
 	return json.Marshal(ccApp)
@@ -141,5 +143,11 @@ func (ccApp *ccApplication) setBuildpackLifecycle(a Application) {
 func (ccApp *ccApplication) setDockerLifecycle() {
 	ccApp.Lifecycle = ccLifecycle{
 		Type: constant.AppLifecycleTypeDocker,
+	}
+}
+
+func (ccApp *ccApplication) setCNBLifecycle() {
+	ccApp.Lifecycle = ccLifecycle{
+		Type: constant.AppLifecycleTypeCNB,
 	}
 }

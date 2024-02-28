@@ -9,6 +9,7 @@ const (
 	// AppLifecycleTypeDocker will pull a docker image from a registry to run an
 	// app.
 	AppLifecycleTypeDocker AppLifecycleType = "docker"
+	AppLifecycleTypeCNB    AppLifecycleType = "cnb"
 )
 
 // ApplicationAction represents the action being taken on an application

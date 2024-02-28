@@ -1,7 +1,10 @@
 package v7pushaction
 
 import (
+	"fmt"
+
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/util/manifestparser"
 )
@@ -17,6 +20,8 @@ func (actor Actor) CreatePushPlans(
 ) ([]PushPlan, v7action.Warnings, error) {
 	var pushPlans []PushPlan
 
+	fmt.Printf("%v\n", manifest)
+
 	apps, warnings, err := actor.V7Actor.GetApplicationsByNamesAndSpace(manifest.AppNames(), spaceGUID)
 	if err != nil {
 		return nil, warnings, err
@@ -29,6 +34,10 @@ func (actor Actor) CreatePushPlans(
 			SpaceGUID:   spaceGUID,
 			Application: nameToApp[manifestApplication.Name],
 			BitsPath:    manifestApplication.Path,
+		}
+
+		if manifestApplication.CNB {
+			plan.Application.LifecycleType = constant.AppLifecycleTypeCNB
 		}
 
 		if manifestApplication.Docker != nil {

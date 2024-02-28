@@ -31,6 +31,7 @@ type Application struct {
 	DefaultRoute            bool                     `yaml:"default-route,omitempty"`
 	Stack                   string                   `yaml:"stack,omitempty"`
 	LogRateLimit            string                   `yaml:"log-rate-limit-per-second,omitempty"`
+	CNB                     bool                     `yaml:"cnb,omitempty"`
 	RemainingManifestFields map[string]interface{}   `yaml:"-,inline"`
 }
 

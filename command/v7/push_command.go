@@ -231,12 +231,19 @@ func (cmd PushCommand) Execute(args []string) error {
 		cmd.UI.DisplayText("Manifest applied")
 	}
 
+	cmd.UI.DisplayText(fmt.Sprintf("parsed cnb: %b", transformedManifest.Applications[0].CNB))
+
 	pushPlans, warnings, err := cmd.PushActor.CreatePushPlans(
 		cmd.Config.TargetedSpace().GUID,
 		cmd.Config.TargetedOrganization().GUID,
 		transformedManifest,
 		flagOverrides,
 	)
+
+	for _, plan := range pushPlans {
+		cmd.UI.DisplayText(fmt.Sprintf("app %s using lifecyle %q", plan.Application.GUID, plan.Application.LifecycleType))
+	}
+
 	cmd.UI.DisplayWarnings(warnings)
 	if err != nil {
 		return err

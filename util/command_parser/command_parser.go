@@ -238,7 +238,7 @@ func (p *CommandParser) parse(args []string, commandList interface{}) (int, erro
 	fmt.Fprintf(os.Stderr, "Unexpected error: %s\n", err.Error())
 	return 1, nil
 }
-
+ 
 func containsHelpFlag(args []string) bool {
 	for _, arg := range args {
 		if arg == "-h" || arg == "--help" || arg == "--h" {
