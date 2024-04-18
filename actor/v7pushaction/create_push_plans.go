@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"code.cloudfoundry.org/cli/actor/v7action"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/util/manifestparser"
 )
@@ -36,8 +35,12 @@ func (actor Actor) CreatePushPlans(
 			BitsPath:    manifestApplication.Path,
 		}
 
-		if manifestApplication.CNB {
-			plan.Application.LifecycleType = constant.AppLifecycleTypeCNB
+		if manifestApplication.Lifecycle != "" {
+			plan.Application.LifecycleType = manifestApplication.Lifecycle
+		}
+
+		if overrides.Lifecycle != "" {
+			plan.Application.LifecycleType = overrides.Lifecycle
 		}
 
 		if manifestApplication.Docker != nil {

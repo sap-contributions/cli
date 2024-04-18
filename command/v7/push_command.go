@@ -104,8 +104,9 @@ type PushCommand struct {
 	Task                    bool                                `long:"task" description:"Push an app that is used only to execute tasks. The app will be staged, but not started and will have no route assigned."`
 	Vars                    []template.VarKV                    `long:"var" description:"Variable key value pair for variable substitution, (e.g., name=app1); can specify multiple times"`
 	PathsToVarsFiles        []flag.PathWithExistenceCheck       `long:"vars-file" description:"Path to a variable substitution file for manifest; can specify multiple times"`
+	Lifecycle               constant.AppLifecycleType           `long:"lifecycle" description:"App lifecycle type to stage and run the app" default:""`
 	dockerPassword          interface{}                         `environmentName:"CF_DOCKER_PASSWORD" environmentDescription:"Password used for private docker repository"`
-	usage                   interface{}                         `usage:"CF_NAME push APP_NAME [-b BUILDPACK_NAME]\n   [-c COMMAND] [-f MANIFEST_PATH | --no-manifest] [--no-start] [--no-wait] [-i NUM_INSTANCES]\n   [-k DISK] [-m MEMORY] [-l LOG_RATE_LIMIT] [-p PATH] [-s STACK] [-t HEALTH_TIMEOUT] [--task TASK]\n   [-u (process | port | http)] [--no-route | --random-route]\n   [--var KEY=VALUE] [--vars-file VARS_FILE_PATH]...\n \n   CF_NAME push APP_NAME --docker-image [REGISTRY_HOST:PORT/]IMAGE[:TAG] [--docker-username USERNAME]\n   [-c COMMAND] [-f MANIFEST_PATH | --no-manifest] [--no-start] [--no-wait] [-i NUM_INSTANCES]\n   [-k DISK] [-m MEMORY] [-l LOG_RATE_LIMIT] [-p PATH] [-s STACK] [-t HEALTH_TIMEOUT] [--task TASK]\n   [-u (process | port | http)] [--no-route | --random-route ]\n   [--var KEY=VALUE] [--vars-file VARS_FILE_PATH]..."`
+	usage                   interface{}                         `usage:"CF_NAME push APP_NAME [-b BUILDPACK_NAME]\n   [-c COMMAND] [-f MANIFEST_PATH | --no-manifest] [--lifecycle (buildpack | docker | cnb)] [--no-start] [--no-wait] [-i NUM_INSTANCES]\n   [-k DISK] [-m MEMORY] [-l LOG_RATE_LIMIT] [-p PATH] [-s STACK] [-t HEALTH_TIMEOUT] [--task TASK]\n   [-u (process | port | http)] [--no-route | --random-route]\n   [--var KEY=VALUE] [--vars-file VARS_FILE_PATH]...\n \n   CF_NAME push APP_NAME --docker-image [REGISTRY_HOST:PORT/]IMAGE[:TAG] [--docker-username USERNAME]\n   [-c COMMAND] [-f MANIFEST_PATH | --no-manifest] [--no-start] [--no-wait] [-i NUM_INSTANCES]\n   [-k DISK] [-m MEMORY] [-l LOG_RATE_LIMIT] [-p PATH] [-s STACK] [-t HEALTH_TIMEOUT] [--task TASK]\n   [-u (process | port | http)] [--no-route | --random-route ]\n   [--var KEY=VALUE] [--vars-file VARS_FILE_PATH]..."`
 	envCFStagingTimeout     interface{}                         `environmentName:"CF_STAGING_TIMEOUT" environmentDescription:"Max wait time for staging, in minutes" environmentDefault:"15"`
 	envCFStartupTimeout     interface{}                         `environmentName:"CF_STARTUP_TIMEOUT" environmentDescription:"Max wait time for app instance startup, in minutes" environmentDefault:"5"`
 
@@ -230,8 +231,6 @@ func (cmd PushCommand) Execute(args []string) error {
 	if hasManifest {
 		cmd.UI.DisplayText("Manifest applied")
 	}
-
-	cmd.UI.DisplayText(fmt.Sprintf("parsed cnb: %b", transformedManifest.Applications[0].CNB))
 
 	pushPlans, warnings, err := cmd.PushActor.CreatePushPlans(
 		cmd.Config.TargetedSpace().GUID,
@@ -368,6 +367,7 @@ func (cmd PushCommand) GetFlagOverrides() (v7pushaction.FlagOverrides, error) {
 		NoManifest:          cmd.NoManifest,
 		Task:                cmd.Task,
 		LogRateLimit:        cmd.LogRateLimit,
+		Lifecycle:           cmd.Lifecycle,
 	}, nil
 }
 
