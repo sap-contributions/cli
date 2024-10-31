@@ -6,6 +6,7 @@ import (
 
 	"code.cloudfoundry.org/cli/actor/v7action"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command"
 	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/command/translatableerror"
@@ -21,6 +22,7 @@ type CreateBuildpackCommand struct {
 	usage           interface{}              `usage:"CF_NAME create-buildpack BUILDPACK PATH POSITION [--disable]\n\nTIP:\n   Path should be a zip file, a url to a zip file, or a local directory. Position is a positive integer, sets priority, and is sorted from lowest to highest."`
 	relatedCommands interface{}              `related_commands:"buildpacks, push"`
 	Disable         bool                     `long:"disable" description:"Disable the buildpack from being used for staging"`
+	Lifecycle       flag.AppType             `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Lifecycle type" default:"buildpack"`
 
 	ProgressBar v7action.SimpleProgressBar
 }
@@ -59,9 +61,10 @@ func (cmd CreateBuildpackCommand) Execute(args []string) error {
 	}
 
 	createdBuildpack, warnings, err := cmd.Actor.CreateBuildpack(resources.Buildpack{
-		Name:     cmd.RequiredArgs.Buildpack,
-		Position: types.NullInt{IsSet: true, Value: cmd.RequiredArgs.Position},
-		Enabled:  types.NullBool{IsSet: true, Value: !cmd.Disable},
+		Name:      cmd.RequiredArgs.Buildpack,
+		Position:  types.NullInt{IsSet: true, Value: cmd.RequiredArgs.Position},
+		Enabled:   types.NullBool{IsSet: true, Value: !cmd.Disable},
+		Lifecycle: constant.AppLifecycleType(cmd.Lifecycle.Value),
 	})
 	cmd.UI.DisplayWarnings(warnings)
 	if err != nil {

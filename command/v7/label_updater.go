@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command"
 	"code.cloudfoundry.org/cli/command/translatableerror"
 	"code.cloudfoundry.org/cli/types"
@@ -17,7 +18,7 @@ import (
 type SetLabelActor interface {
 	GetCurrentUser() (configv3.User, error)
 	UpdateApplicationLabelsByApplicationName(string, string, map[string]types.NullString) (v7action.Warnings, error)
-	UpdateBuildpackLabelsByBuildpackNameAndStack(string, string, map[string]types.NullString) (v7action.Warnings, error)
+	UpdateBuildpackLabelsByBuildpackNameAndStack(string, string, constant.AppLifecycleType, map[string]types.NullString) (v7action.Warnings, error)
 	UpdateDomainLabelsByDomainName(string, map[string]types.NullString) (v7action.Warnings, error)
 	UpdateOrganizationLabelsByOrganizationName(string, map[string]types.NullString) (v7action.Warnings, error)
 	UpdateRouteLabels(string, string, map[string]types.NullString) (v7action.Warnings, error)
@@ -37,11 +38,12 @@ const (
 )
 
 type TargetResource struct {
-	ResourceType    string
-	ResourceName    string
-	BuildpackStack  string
-	ServiceBroker   string
-	ServiceOffering string
+	ResourceType       string
+	ResourceName       string
+	BuildpackStack     string
+	BuildpackLifecycle constant.AppLifecycleType
+	ServiceBroker      string
+	ServiceOffering    string
 }
 
 type LabelUpdater struct {
@@ -84,7 +86,7 @@ func (cmd *LabelUpdater) Execute(targetResource TargetResource, labels map[strin
 		warnings, err = cmd.Actor.UpdateApplicationLabelsByApplicationName(cmd.targetResource.ResourceName, cmd.Config.TargetedSpace().GUID, cmd.labels)
 	case Buildpack:
 		cmd.displayMessageWithStack()
-		warnings, err = cmd.Actor.UpdateBuildpackLabelsByBuildpackNameAndStack(cmd.targetResource.ResourceName, cmd.targetResource.BuildpackStack, cmd.labels)
+		warnings, err = cmd.Actor.UpdateBuildpackLabelsByBuildpackNameAndStack(cmd.targetResource.ResourceName, cmd.targetResource.BuildpackStack, cmd.targetResource.BuildpackLifecycle, cmd.labels)
 	case Domain:
 		cmd.displayMessageDefault()
 		warnings, err = cmd.Actor.UpdateDomainLabelsByDomainName(cmd.targetResource.ResourceName, cmd.labels)

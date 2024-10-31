@@ -7,6 +7,7 @@ import (
 	"code.cloudfoundry.org/cli/actor/v7action"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command"
 	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/command/translatableerror"
@@ -38,6 +39,7 @@ type UpdateBuildpackCommand struct {
 	NewName         string                           `long:"rename" description:"Rename an existing buildpack"`
 	CurrentStack    string                           `long:"stack" short:"s" description:"Specify stack to disambiguate buildpacks with the same name"`
 	Unlock          bool                             `long:"unlock" description:"Unlock the buildpack to enable updates"`
+	Lifecycle       flag.AppType                     `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
 
 	ProgressBar v7action.SimpleProgressBar
 }
@@ -110,6 +112,7 @@ func (cmd UpdateBuildpackCommand) updateBuildpack() (resources.Buildpack, error)
 	desiredBuildpack.Enabled = types.NullBool{IsSet: cmd.Enable || cmd.Disable, Value: cmd.Enable}
 	desiredBuildpack.Locked = types.NullBool{IsSet: cmd.Lock || cmd.Unlock, Value: cmd.Lock}
 	desiredBuildpack.Position = cmd.Position
+	desiredBuildpack.Lifecycle = constant.AppLifecycleType(cmd.Lifecycle.Value)
 
 	if cmd.NewStack != "" {
 		desiredBuildpack.Stack = cmd.NewStack

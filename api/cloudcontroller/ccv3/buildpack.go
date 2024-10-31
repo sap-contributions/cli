@@ -52,6 +52,7 @@ func (client *Client) GetBuildpacks(query ...Query) ([]resources.Buildpack, Warn
 func (client Client) UpdateBuildpack(buildpack resources.Buildpack) (resources.Buildpack, Warnings, error) {
 	var responseBody resources.Buildpack
 
+	buildpack.Lifecycle = ""
 	_, warnings, err := client.MakeRequest(RequestParams{
 		RequestName:  internal.PatchBuildpackRequest,
 		URIParams:    internal.Params{"buildpack_guid": buildpack.GUID},

@@ -3,6 +3,8 @@ package v7
 import (
 	"strconv"
 
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
+	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/util/ui"
 )
@@ -10,9 +12,10 @@ import (
 type BuildpacksCommand struct {
 	BaseCommand
 
-	usage           interface{} `usage:"CF_NAME buildpacks [--labels SELECTOR]\n\nEXAMPLES:\n   CF_NAME buildpacks\n   CF_NAME buildpacks --labels 'environment in (production,staging),tier in (backend)'\n   CF_NAME buildpacks --labels 'env=dev,!chargeback-code,tier in (backend,worker)'"`
-	relatedCommands interface{} `related_commands:"create-buildpack, delete-buildpack, rename-buildpack, update-buildpack"`
-	Labels          string      `long:"labels" description:"Selector to filter buildpacks by labels"`
+	usage           interface{}  `usage:"CF_NAME buildpacks [--labels SELECTOR]\n\nEXAMPLES:\n   CF_NAME buildpacks\n   CF_NAME buildpacks --labels 'environment in (production,staging),tier in (backend)'\n   CF_NAME buildpacks --labels 'env=dev,!chargeback-code,tier in (backend,worker)'"`
+	relatedCommands interface{}  `related_commands:"create-buildpack, delete-buildpack, rename-buildpack, update-buildpack"`
+	Labels          string       `long:"labels" description:"Selector to filter buildpacks by labels"`
+	Lifecycle       flag.AppType `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Filter buildpacks by the lifecycle" default:"buildpack"`
 }
 
 func (cmd BuildpacksCommand) Execute(args []string) error {
@@ -31,7 +34,7 @@ func (cmd BuildpacksCommand) Execute(args []string) error {
 	})
 	cmd.UI.DisplayNewline()
 
-	buildpacks, warnings, err := cmd.Actor.GetBuildpacks(cmd.Labels)
+	buildpacks, warnings, err := cmd.Actor.GetBuildpacks(cmd.Labels, constant.AppLifecycleType(cmd.Lifecycle.Value))
 	cmd.UI.DisplayWarnings(warnings)
 	if err != nil {
 		return err
@@ -48,7 +51,7 @@ func (cmd BuildpacksCommand) Execute(args []string) error {
 func (cmd BuildpacksCommand) displayTable(buildpacks []resources.Buildpack) {
 	if len(buildpacks) > 0 {
 		var keyValueTable = [][]string{
-			{"position", "name", "stack", "enabled", "locked", "state", "filename"},
+			{"position", "name", "stack", "enabled", "locked", "state", "lifecycle", "filename"},
 		}
 		for _, buildpack := range buildpacks {
 			keyValueTable = append(keyValueTable, []string{
@@ -58,6 +61,7 @@ func (cmd BuildpacksCommand) displayTable(buildpacks []resources.Buildpack) {
 				strconv.FormatBool(buildpack.Enabled.Value),
 				strconv.FormatBool(buildpack.Locked.Value),
 				buildpack.State,
+				string(buildpack.Lifecycle),
 				buildpack.Filename,
 			})
 		}

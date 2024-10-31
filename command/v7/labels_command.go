@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/command/translatableerror"
 	"code.cloudfoundry.org/cli/types"
@@ -33,6 +34,7 @@ type LabelsCommand struct {
 
 	RequiredArgs    flag.LabelsArgs `positional-args:"yes"`
 	BuildpackStack  string          `long:"stack" short:"s" description:"Specify stack to disambiguate buildpacks with the same name"`
+	Lifecycle       flag.AppType    `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
 	relatedCommands interface{}     `related_commands:"set-label, unset-label"`
 	ServiceBroker   string          `long:"broker" short:"b" description:"Specify a service broker to disambiguate service offerings or service plans with the same name."`
 	ServiceOffering string          `long:"offering" short:"e" description:"Specify a service offering to disambiguate service plans with the same name."`
@@ -68,7 +70,7 @@ func (cmd LabelsCommand) Execute(args []string) error {
 		labels, warnings, err = cmd.Actor.GetApplicationLabels(cmd.RequiredArgs.ResourceName, cmd.Config.TargetedSpace().GUID)
 	case Buildpack:
 		cmd.displayMessageWithStack()
-		labels, warnings, err = cmd.Actor.GetBuildpackLabels(cmd.RequiredArgs.ResourceName, cmd.BuildpackStack)
+		labels, warnings, err = cmd.Actor.GetBuildpackLabels(cmd.RequiredArgs.ResourceName, cmd.BuildpackStack, constant.AppLifecycleType(cmd.Lifecycle.Value))
 	case Domain:
 		cmd.displayMessageDefault()
 		labels, warnings, err = cmd.Actor.GetDomainLabels(cmd.RequiredArgs.ResourceName)

@@ -108,7 +108,7 @@ var _ = Describe("create-app Command", func() {
 
 			When("app type is specified", func() {
 				BeforeEach(func() {
-					cmd.AppType = "docker"
+					cmd.AppType.Value = "docker"
 				})
 
 				It("creates an app with specified app type", func() {
@@ -127,7 +127,7 @@ var _ = Describe("create-app Command", func() {
 
 			When("app type is cnb", func() {
 				BeforeEach(func() {
-					cmd.AppType = "cnb"
+					cmd.AppType.Value = "cnb"
 					cmd.Buildpacks = []string{"foo"}
 					fakeConfig.CNBCredentialsReturns(map[string]interface{}{
 						"foo": "bar",
@@ -197,7 +197,7 @@ var _ = Describe("create-app Command", func() {
 
 			Context("due to missing buildpacks when AppType is cnb", func() {
 				BeforeEach(func() {
-					cmd.AppType = "cnb"
+					cmd.AppType.Value = "cnb"
 				})
 
 				It("displays the header and error", func() {

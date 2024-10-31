@@ -2,6 +2,7 @@ package v7
 
 import (
 	"code.cloudfoundry.org/cli/actor/actionerror"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/flag"
 )
 
@@ -13,6 +14,7 @@ type DeleteBuildpackCommand struct {
 	relatedCommands interface{}        `related_commands:"buildpacks"`
 	Force           bool               `long:"force" short:"f" description:"Force deletion without confirmation"`
 	Stack           string             `long:"stack" short:"s" description:"Specify stack to disambiguate buildpacks with the same name. Required when buildpack name is ambiguous"`
+	Lifecycle       flag.AppType       `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
 }
 
 func (cmd DeleteBuildpackCommand) Execute(args []string) error {
@@ -47,7 +49,7 @@ func (cmd DeleteBuildpackCommand) Execute(args []string) error {
 			"Stack":         cmd.Stack,
 		})
 	}
-	warnings, err := cmd.Actor.DeleteBuildpackByNameAndStack(cmd.RequiredArgs.Buildpack, cmd.Stack)
+	warnings, err := cmd.Actor.DeleteBuildpackByNameAndStack(cmd.RequiredArgs.Buildpack, cmd.Stack, constant.AppLifecycleType(cmd.Lifecycle.Value))
 	cmd.UI.DisplayWarnings(warnings)
 
 	if err != nil {

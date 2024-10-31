@@ -18,7 +18,7 @@ func (i *Revision) UnmarshalFlag(val string) error {
 		}
 	}
 	if i.Value < 1 {
-		if i.Value == 0 && i.IsSet == false {
+		if i.Value == 0 && !i.IsSet {
 			return nil
 		}
 		return &flags.Error{

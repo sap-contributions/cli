@@ -1,7 +1,6 @@
 package v7
 
 import (
-	"errors"
 	"fmt"
 
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
@@ -38,19 +37,15 @@ func (cmd CreateAppCommand) Execute(args []string) error {
 		"CurrentUser":  user.Name,
 	})
 
-	cmd.UI.DisplayText(fmt.Sprintf("Using app type %q", constant.AppLifecycleType(cmd.AppType)))
+	cmd.UI.DisplayText(fmt.Sprintf("Using app type %q", constant.AppLifecycleType(cmd.AppType.Value)))
 
 	app := resources.Application{
 		Name:                cmd.RequiredArgs.AppName,
-		LifecycleType:       constant.AppLifecycleType(cmd.AppType),
+		LifecycleType:       constant.AppLifecycleType(cmd.AppType.Value),
 		LifecycleBuildpacks: cmd.Buildpacks,
 	}
 
-	if constant.AppLifecycleType(cmd.AppType) == constant.AppLifecycleTypeCNB {
-		if len(cmd.Buildpacks) == 0 {
-			return errors.New("buildpack(s) must be provided when using --app-type cnb")
-		}
-
+	if constant.AppLifecycleType(cmd.AppType.Value) == constant.AppLifecycleTypeCNB {
 		creds, err := cmd.Config.CNBCredentials()
 		if err != nil {
 			return err

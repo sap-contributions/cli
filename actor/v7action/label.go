@@ -2,6 +2,7 @@ package v7action
 
 import (
 	"code.cloudfoundry.org/cli/actor/actionerror"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 )
@@ -56,8 +57,8 @@ func (actor *Actor) GetStackLabels(stackName string) (map[string]types.NullStrin
 	return actor.extractLabels(resource.Metadata, warnings, err)
 }
 
-func (actor *Actor) GetBuildpackLabels(buildpackName string, buildpackStack string) (map[string]types.NullString, Warnings, error) {
-	resource, warnings, err := actor.GetBuildpackByNameAndStack(buildpackName, buildpackStack)
+func (actor *Actor) GetBuildpackLabels(buildpackName string, buildpackStack string, lifecycle constant.AppLifecycleType) (map[string]types.NullString, Warnings, error) {
+	resource, warnings, err := actor.GetBuildpackByNameAndStack(buildpackName, buildpackStack, lifecycle)
 	return actor.extractLabels(resource.Metadata, warnings, err)
 }
 
@@ -81,8 +82,8 @@ func (actor *Actor) UpdateApplicationLabelsByApplicationName(appName string, spa
 	return actor.updateResourceMetadata("app", app.GUID, resources.Metadata{Labels: labels}, warnings)
 }
 
-func (actor *Actor) UpdateBuildpackLabelsByBuildpackNameAndStack(buildpackName string, stack string, labels map[string]types.NullString) (Warnings, error) {
-	buildpack, warnings, err := actor.GetBuildpackByNameAndStack(buildpackName, stack)
+func (actor *Actor) UpdateBuildpackLabelsByBuildpackNameAndStack(buildpackName string, stack string, lifecycle constant.AppLifecycleType, labels map[string]types.NullString) (Warnings, error) {
+	buildpack, warnings, err := actor.GetBuildpackByNameAndStack(buildpackName, stack, lifecycle)
 	if err != nil {
 		return warnings, err
 	}
