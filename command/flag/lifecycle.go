@@ -12,3 +12,8 @@ type Lifecycle struct {
 func (Lifecycle) Complete(prefix string) []flags.Completion {
 	return completions([]string{string(constant.AppLifecycleTypeBuildpack), string(constant.AppLifecycleTypeCNB), string(constant.AppLifecycleTypeDocker)}, prefix, false)
 }
+
+func (l *Lifecycle) UnmarshalFlag(val string) error {
+	l.Value = constant.AppLifecycleType(val)
+	return nil
+}

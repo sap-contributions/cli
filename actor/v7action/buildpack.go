@@ -48,33 +48,25 @@ func (actor Actor) GetBuildpackByNameAndStack(buildpackName string, buildpackSta
 		err        error
 	)
 
-	if buildpackStack == "" {
-		buildpacks, warnings, err = actor.CloudControllerClient.GetBuildpacks(
-			ccv3.Query{
-				Key:    ccv3.NameFilter,
-				Values: []string{buildpackName},
-			},
-			ccv3.Query{
-				Key:    ccv3.LifecycleFilter,
-				Values: []string{string(lifecycle)},
-			},
-		)
-	} else {
-		buildpacks, warnings, err = actor.CloudControllerClient.GetBuildpacks(
-			ccv3.Query{
-				Key:    ccv3.NameFilter,
-				Values: []string{buildpackName},
-			},
-			ccv3.Query{
-				Key:    ccv3.StackFilter,
-				Values: []string{buildpackStack},
-			},
-			ccv3.Query{
-				Key:    ccv3.LifecycleFilter,
-				Values: []string{string(lifecycle)},
-			},
-		)
+	queryParams := []ccv3.Query{
+		{
+			Key:    ccv3.NameFilter,
+			Values: []string{buildpackName},
+		},
+		{
+			Key:    ccv3.LifecycleFilter,
+			Values: []string{string(lifecycle)},
+		},
 	}
+
+	if buildpackStack != "" {
+		queryParams = append(queryParams, ccv3.Query{
+			Key:    ccv3.StackFilter,
+			Values: []string{buildpackStack},
+		})
+	}
+
+	buildpacks, warnings, err = actor.CloudControllerClient.GetBuildpacks(queryParams...)
 
 	if err != nil {
 		return resources.Buildpack{}, Warnings(warnings), err

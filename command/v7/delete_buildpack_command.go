@@ -2,7 +2,6 @@ package v7
 
 import (
 	"code.cloudfoundry.org/cli/actor/actionerror"
-	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/flag"
 )
 
@@ -49,7 +48,7 @@ func (cmd DeleteBuildpackCommand) Execute(args []string) error {
 			"Stack":         cmd.Stack,
 		})
 	}
-	warnings, err := cmd.Actor.DeleteBuildpackByNameAndStack(cmd.RequiredArgs.Buildpack, cmd.Stack, constant.AppLifecycleType(cmd.Lifecycle.Value))
+	warnings, err := cmd.Actor.DeleteBuildpackByNameAndStack(cmd.RequiredArgs.Buildpack, cmd.Stack, cmd.Lifecycle.Value)
 	cmd.UI.DisplayWarnings(warnings)
 
 	if err != nil {
