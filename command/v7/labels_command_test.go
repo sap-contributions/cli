@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/commandfakes"
 	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/command/translatableerror"
@@ -752,13 +753,17 @@ var _ = Describe("labels command", func() {
 						ResourceName: "oshkosh",
 					}
 					cmd.BuildpackStack = "cflinuxfs4"
+					cmd.Lifecycle = flag.Lifecycle{
+						Value: constant.AppLifecycleTypeBuildpack,
+					}
 				})
 				It("retrieves the labels when resource type is buildpack", func() {
 					Expect(executeErr).ToNot(HaveOccurred())
 					Expect(fakeLabelsActor.GetBuildpackLabelsCallCount()).To(Equal(1))
-					buildpackName, stackName := fakeLabelsActor.GetBuildpackLabelsArgsForCall(0)
+					buildpackName, stackName, lifecycle := fakeLabelsActor.GetBuildpackLabelsArgsForCall(0)
 					Expect(buildpackName).To(Equal("oshkosh"))
 					Expect(stackName).To(Equal("cflinuxfs4"))
+					Expect(lifecycle).To(Equal(constant.AppLifecycleTypeBuildpack))
 				})
 			})
 		})

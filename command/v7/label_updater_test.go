@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/commandfakes"
 	"code.cloudfoundry.org/cli/command/translatableerror"
 	. "code.cloudfoundry.org/cli/command/v7"
@@ -362,13 +363,15 @@ var _ = Describe("LabelUpdater", func() {
 			When("the stack is specified", func() {
 				BeforeEach(func() {
 					targetResource.BuildpackStack = "globinski"
+					targetResource.BuildpackLifecycle = constant.AppLifecycleTypeBuildpack
 				})
 
 				It("passes the right parameters", func() {
 					Expect(fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackCallCount()).To(Equal(1))
-					name, stack, labels := fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(0)
+					name, stack, lifecycle, labels := fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(0)
 					Expect(name).To(Equal(resourceName), "failed to pass buildpack name")
 					Expect(stack).To(Equal("globinski"), "failed to pass stack name")
+					Expect(lifecycle).To(Equal(constant.AppLifecycleTypeBuildpack), "failed to pass lifecycle")
 					Expect(labels).To(BeEquivalentTo(expectedMap))
 				})
 
@@ -380,11 +383,16 @@ var _ = Describe("LabelUpdater", func() {
 			})
 
 			When("the stack is not specified", func() {
+				BeforeEach(func() {
+					targetResource.BuildpackLifecycle = constant.AppLifecycleTypeBuildpack
+				})
+
 				It("passes the right parameters", func() {
 					Expect(fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackCallCount()).To(Equal(1))
-					name, stack, labels := fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(0)
+					name, stack, lifecycle, labels := fakeActor.UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(0)
 					Expect(name).To(Equal(resourceName), "failed to pass buildpack name")
 					Expect(stack).To(Equal(""), "failed to pass stack name")
+					Expect(lifecycle).To(Equal(constant.AppLifecycleTypeBuildpack), "failed to pass lifecycle")
 					Expect(labels).To(BeEquivalentTo(expectedMap))
 				})
 

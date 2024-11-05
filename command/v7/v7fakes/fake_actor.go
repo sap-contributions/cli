@@ -571,11 +571,12 @@ type FakeActor struct {
 		result1 v7action.Warnings
 		result2 error
 	}
-	DeleteBuildpackByNameAndStackStub        func(string, string) (v7action.Warnings, error)
+	DeleteBuildpackByNameAndStackStub        func(string, string, constanta.AppLifecycleType) (v7action.Warnings, error)
 	deleteBuildpackByNameAndStackMutex       sync.RWMutex
 	deleteBuildpackByNameAndStackArgsForCall []struct {
 		arg1 string
 		arg2 string
+		arg3 constanta.AppLifecycleType
 	}
 	deleteBuildpackByNameAndStackReturns struct {
 		result1 v7action.Warnings
@@ -1177,11 +1178,12 @@ type FakeActor struct {
 		result2 v7action.Warnings
 		result3 error
 	}
-	GetBuildpackLabelsStub        func(string, string) (map[string]types.NullString, v7action.Warnings, error)
+	GetBuildpackLabelsStub        func(string, string, constanta.AppLifecycleType) (map[string]types.NullString, v7action.Warnings, error)
 	getBuildpackLabelsMutex       sync.RWMutex
 	getBuildpackLabelsArgsForCall []struct {
 		arg1 string
 		arg2 string
+		arg3 constanta.AppLifecycleType
 	}
 	getBuildpackLabelsReturns struct {
 		result1 map[string]types.NullString
@@ -1193,10 +1195,11 @@ type FakeActor struct {
 		result2 v7action.Warnings
 		result3 error
 	}
-	GetBuildpacksStub        func(string) ([]resources.Buildpack, v7action.Warnings, error)
+	GetBuildpacksStub        func(string, constanta.AppLifecycleType) ([]resources.Buildpack, v7action.Warnings, error)
 	getBuildpacksMutex       sync.RWMutex
 	getBuildpacksArgsForCall []struct {
 		arg1 string
+		arg2 constanta.AppLifecycleType
 	}
 	getBuildpacksReturns struct {
 		result1 []resources.Buildpack
@@ -3252,12 +3255,13 @@ type FakeActor struct {
 		result2 v7action.Warnings
 		result3 error
 	}
-	UpdateBuildpackLabelsByBuildpackNameAndStackStub        func(string, string, map[string]types.NullString) (v7action.Warnings, error)
+	UpdateBuildpackLabelsByBuildpackNameAndStackStub        func(string, string, constanta.AppLifecycleType, map[string]types.NullString) (v7action.Warnings, error)
 	updateBuildpackLabelsByBuildpackNameAndStackMutex       sync.RWMutex
 	updateBuildpackLabelsByBuildpackNameAndStackArgsForCall []struct {
 		arg1 string
 		arg2 string
-		arg3 map[string]types.NullString
+		arg3 constanta.AppLifecycleType
+		arg4 map[string]types.NullString
 	}
 	updateBuildpackLabelsByBuildpackNameAndStackReturns struct {
 		result1 v7action.Warnings
@@ -6060,19 +6064,20 @@ func (fake *FakeActor) DeleteApplicationByNameAndSpaceReturnsOnCall(i int, resul
 	}{result1, result2}
 }
 
-func (fake *FakeActor) DeleteBuildpackByNameAndStack(arg1 string, arg2 string) (v7action.Warnings, error) {
+func (fake *FakeActor) DeleteBuildpackByNameAndStack(arg1 string, arg2 string, arg3 constanta.AppLifecycleType) (v7action.Warnings, error) {
 	fake.deleteBuildpackByNameAndStackMutex.Lock()
 	ret, specificReturn := fake.deleteBuildpackByNameAndStackReturnsOnCall[len(fake.deleteBuildpackByNameAndStackArgsForCall)]
 	fake.deleteBuildpackByNameAndStackArgsForCall = append(fake.deleteBuildpackByNameAndStackArgsForCall, struct {
 		arg1 string
 		arg2 string
-	}{arg1, arg2})
+		arg3 constanta.AppLifecycleType
+	}{arg1, arg2, arg3})
 	stub := fake.DeleteBuildpackByNameAndStackStub
 	fakeReturns := fake.deleteBuildpackByNameAndStackReturns
-	fake.recordInvocation("DeleteBuildpackByNameAndStack", []interface{}{arg1, arg2})
+	fake.recordInvocation("DeleteBuildpackByNameAndStack", []interface{}{arg1, arg2, arg3})
 	fake.deleteBuildpackByNameAndStackMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2)
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -6086,17 +6091,17 @@ func (fake *FakeActor) DeleteBuildpackByNameAndStackCallCount() int {
 	return len(fake.deleteBuildpackByNameAndStackArgsForCall)
 }
 
-func (fake *FakeActor) DeleteBuildpackByNameAndStackCalls(stub func(string, string) (v7action.Warnings, error)) {
+func (fake *FakeActor) DeleteBuildpackByNameAndStackCalls(stub func(string, string, constanta.AppLifecycleType) (v7action.Warnings, error)) {
 	fake.deleteBuildpackByNameAndStackMutex.Lock()
 	defer fake.deleteBuildpackByNameAndStackMutex.Unlock()
 	fake.DeleteBuildpackByNameAndStackStub = stub
 }
 
-func (fake *FakeActor) DeleteBuildpackByNameAndStackArgsForCall(i int) (string, string) {
+func (fake *FakeActor) DeleteBuildpackByNameAndStackArgsForCall(i int) (string, string, constanta.AppLifecycleType) {
 	fake.deleteBuildpackByNameAndStackMutex.RLock()
 	defer fake.deleteBuildpackByNameAndStackMutex.RUnlock()
 	argsForCall := fake.deleteBuildpackByNameAndStackArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakeActor) DeleteBuildpackByNameAndStackReturns(result1 v7action.Warnings, result2 error) {
@@ -8738,19 +8743,20 @@ func (fake *FakeActor) GetApplicationsByNamesAndSpaceReturnsOnCall(i int, result
 	}{result1, result2, result3}
 }
 
-func (fake *FakeActor) GetBuildpackLabels(arg1 string, arg2 string) (map[string]types.NullString, v7action.Warnings, error) {
+func (fake *FakeActor) GetBuildpackLabels(arg1 string, arg2 string, arg3 constanta.AppLifecycleType) (map[string]types.NullString, v7action.Warnings, error) {
 	fake.getBuildpackLabelsMutex.Lock()
 	ret, specificReturn := fake.getBuildpackLabelsReturnsOnCall[len(fake.getBuildpackLabelsArgsForCall)]
 	fake.getBuildpackLabelsArgsForCall = append(fake.getBuildpackLabelsArgsForCall, struct {
 		arg1 string
 		arg2 string
-	}{arg1, arg2})
+		arg3 constanta.AppLifecycleType
+	}{arg1, arg2, arg3})
 	stub := fake.GetBuildpackLabelsStub
 	fakeReturns := fake.getBuildpackLabelsReturns
-	fake.recordInvocation("GetBuildpackLabels", []interface{}{arg1, arg2})
+	fake.recordInvocation("GetBuildpackLabels", []interface{}{arg1, arg2, arg3})
 	fake.getBuildpackLabelsMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2)
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
@@ -8764,17 +8770,17 @@ func (fake *FakeActor) GetBuildpackLabelsCallCount() int {
 	return len(fake.getBuildpackLabelsArgsForCall)
 }
 
-func (fake *FakeActor) GetBuildpackLabelsCalls(stub func(string, string) (map[string]types.NullString, v7action.Warnings, error)) {
+func (fake *FakeActor) GetBuildpackLabelsCalls(stub func(string, string, constanta.AppLifecycleType) (map[string]types.NullString, v7action.Warnings, error)) {
 	fake.getBuildpackLabelsMutex.Lock()
 	defer fake.getBuildpackLabelsMutex.Unlock()
 	fake.GetBuildpackLabelsStub = stub
 }
 
-func (fake *FakeActor) GetBuildpackLabelsArgsForCall(i int) (string, string) {
+func (fake *FakeActor) GetBuildpackLabelsArgsForCall(i int) (string, string, constanta.AppLifecycleType) {
 	fake.getBuildpackLabelsMutex.RLock()
 	defer fake.getBuildpackLabelsMutex.RUnlock()
 	argsForCall := fake.getBuildpackLabelsArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakeActor) GetBuildpackLabelsReturns(result1 map[string]types.NullString, result2 v7action.Warnings, result3 error) {
@@ -8806,18 +8812,19 @@ func (fake *FakeActor) GetBuildpackLabelsReturnsOnCall(i int, result1 map[string
 	}{result1, result2, result3}
 }
 
-func (fake *FakeActor) GetBuildpacks(arg1 string) ([]resources.Buildpack, v7action.Warnings, error) {
+func (fake *FakeActor) GetBuildpacks(arg1 string, arg2 constanta.AppLifecycleType) ([]resources.Buildpack, v7action.Warnings, error) {
 	fake.getBuildpacksMutex.Lock()
 	ret, specificReturn := fake.getBuildpacksReturnsOnCall[len(fake.getBuildpacksArgsForCall)]
 	fake.getBuildpacksArgsForCall = append(fake.getBuildpacksArgsForCall, struct {
 		arg1 string
-	}{arg1})
+		arg2 constanta.AppLifecycleType
+	}{arg1, arg2})
 	stub := fake.GetBuildpacksStub
 	fakeReturns := fake.getBuildpacksReturns
-	fake.recordInvocation("GetBuildpacks", []interface{}{arg1})
+	fake.recordInvocation("GetBuildpacks", []interface{}{arg1, arg2})
 	fake.getBuildpacksMutex.Unlock()
 	if stub != nil {
-		return stub(arg1)
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
@@ -8831,17 +8838,17 @@ func (fake *FakeActor) GetBuildpacksCallCount() int {
 	return len(fake.getBuildpacksArgsForCall)
 }
 
-func (fake *FakeActor) GetBuildpacksCalls(stub func(string) ([]resources.Buildpack, v7action.Warnings, error)) {
+func (fake *FakeActor) GetBuildpacksCalls(stub func(string, constanta.AppLifecycleType) ([]resources.Buildpack, v7action.Warnings, error)) {
 	fake.getBuildpacksMutex.Lock()
 	defer fake.getBuildpacksMutex.Unlock()
 	fake.GetBuildpacksStub = stub
 }
 
-func (fake *FakeActor) GetBuildpacksArgsForCall(i int) string {
+func (fake *FakeActor) GetBuildpacksArgsForCall(i int) (string, constanta.AppLifecycleType) {
 	fake.getBuildpacksMutex.RLock()
 	defer fake.getBuildpacksMutex.RUnlock()
 	argsForCall := fake.getBuildpacksArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeActor) GetBuildpacksReturns(result1 []resources.Buildpack, result2 v7action.Warnings, result3 error) {
@@ -17813,20 +17820,21 @@ func (fake *FakeActor) UpdateBuildpackByNameAndStackReturnsOnCall(i int, result1
 	}{result1, result2, result3}
 }
 
-func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStack(arg1 string, arg2 string, arg3 map[string]types.NullString) (v7action.Warnings, error) {
+func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStack(arg1 string, arg2 string, arg3 constanta.AppLifecycleType, arg4 map[string]types.NullString) (v7action.Warnings, error) {
 	fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.Lock()
 	ret, specificReturn := fake.updateBuildpackLabelsByBuildpackNameAndStackReturnsOnCall[len(fake.updateBuildpackLabelsByBuildpackNameAndStackArgsForCall)]
 	fake.updateBuildpackLabelsByBuildpackNameAndStackArgsForCall = append(fake.updateBuildpackLabelsByBuildpackNameAndStackArgsForCall, struct {
 		arg1 string
 		arg2 string
-		arg3 map[string]types.NullString
-	}{arg1, arg2, arg3})
+		arg3 constanta.AppLifecycleType
+		arg4 map[string]types.NullString
+	}{arg1, arg2, arg3, arg4})
 	stub := fake.UpdateBuildpackLabelsByBuildpackNameAndStackStub
 	fakeReturns := fake.updateBuildpackLabelsByBuildpackNameAndStackReturns
-	fake.recordInvocation("UpdateBuildpackLabelsByBuildpackNameAndStack", []interface{}{arg1, arg2, arg3})
+	fake.recordInvocation("UpdateBuildpackLabelsByBuildpackNameAndStack", []interface{}{arg1, arg2, arg3, arg4})
 	fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2, arg3)
+		return stub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -17840,17 +17848,17 @@ func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackCallCount() i
 	return len(fake.updateBuildpackLabelsByBuildpackNameAndStackArgsForCall)
 }
 
-func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackCalls(stub func(string, string, map[string]types.NullString) (v7action.Warnings, error)) {
+func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackCalls(stub func(string, string, constanta.AppLifecycleType, map[string]types.NullString) (v7action.Warnings, error)) {
 	fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.Lock()
 	defer fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.Unlock()
 	fake.UpdateBuildpackLabelsByBuildpackNameAndStackStub = stub
 }
 
-func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(i int) (string, string, map[string]types.NullString) {
+func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackArgsForCall(i int) (string, string, constanta.AppLifecycleType, map[string]types.NullString) {
 	fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.RLock()
 	defer fake.updateBuildpackLabelsByBuildpackNameAndStackMutex.RUnlock()
 	argsForCall := fake.updateBuildpackLabelsByBuildpackNameAndStackArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
 func (fake *FakeActor) UpdateBuildpackLabelsByBuildpackNameAndStackReturns(result1 v7action.Warnings, result2 error) {

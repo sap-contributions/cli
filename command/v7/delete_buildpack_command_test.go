@@ -5,7 +5,9 @@ import (
 
 	"code.cloudfoundry.org/cli/actor/actionerror"
 	"code.cloudfoundry.org/cli/actor/v7action"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/commandfakes"
+	"code.cloudfoundry.org/cli/command/flag"
 	. "code.cloudfoundry.org/cli/command/v7"
 	"code.cloudfoundry.org/cli/command/v7/v7fakes"
 	"code.cloudfoundry.org/cli/util/ui"
@@ -168,14 +170,18 @@ var _ = Describe("delete-buildpack Command", func() {
 
 	It("delegates to the actor", func() {
 		cmd.Stack = "the-stack"
+		cmd.Lifecycle = flag.Lifecycle{
+			Value: constant.AppLifecycleTypeBuildpack,
+		}
 		fakeActor.DeleteBuildpackByNameAndStackReturns(nil, nil)
 
 		executeErr = cmd.Execute(nil)
 
 		Expect(executeErr).ToNot(HaveOccurred())
-		actualBuildpack, actualStack := fakeActor.DeleteBuildpackByNameAndStackArgsForCall(0)
+		actualBuildpack, actualStack, lifecycle := fakeActor.DeleteBuildpackByNameAndStackArgsForCall(0)
 		Expect(actualBuildpack).To(Equal("the-buildpack"))
 		Expect(actualStack).To(Equal("the-stack"))
+		Expect(lifecycle).To(Equal(constant.AppLifecycleTypeBuildpack))
 	})
 
 	It("prints warnings", func() {

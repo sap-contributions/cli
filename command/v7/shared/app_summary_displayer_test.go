@@ -61,7 +61,7 @@ var _ = Describe("app summary displayer", func() {
 									},
 									Sidecars: []resources.Sidecar{},
 									InstanceDetails: []v7action.ProcessInstance{
-										v7action.ProcessInstance{
+										{
 											Index:          0,
 											State:          constant.ProcessInstanceRunning,
 											CPUEntitlement: types.NullFloat64{Value: 0.0, IsSet: true},
@@ -74,7 +74,7 @@ var _ = Describe("app summary displayer", func() {
 											Uptime:         uptime,
 											Details:        "Some Details 1",
 										},
-										v7action.ProcessInstance{
+										{
 											Index:          1,
 											State:          constant.ProcessInstanceRunning,
 											CPUEntitlement: types.NullFloat64{Value: 1.0, IsSet: true},
@@ -87,7 +87,7 @@ var _ = Describe("app summary displayer", func() {
 											Uptime:         time.Since(time.Unix(330480000, 0)),
 											Details:        "Some Details 2",
 										},
-										v7action.ProcessInstance{
+										{
 											Index:          2,
 											State:          constant.ProcessInstanceRunning,
 											CPUEntitlement: types.NullFloat64{Value: 0.03, IsSet: true},
@@ -110,7 +110,7 @@ var _ = Describe("app summary displayer", func() {
 									},
 									Sidecars: []resources.Sidecar{},
 									InstanceDetails: []v7action.ProcessInstance{
-										v7action.ProcessInstance{
+										{
 											Index:          0,
 											State:          constant.ProcessInstanceRunning,
 											CPUEntitlement: types.NullFloat64{Value: 0.0, IsSet: true},
@@ -184,15 +184,15 @@ var _ = Describe("app summary displayer", func() {
 							ProcessSummaries: v7action.ProcessSummaries{
 								{
 									InstanceDetails: []v7action.ProcessInstance{
-										v7action.ProcessInstance{
+										{
 											Index: 0,
 											State: constant.ProcessInstanceRunning,
 										},
-										v7action.ProcessInstance{
+										{
 											Index: 1,
 											State: constant.ProcessInstanceRunning,
 										},
-										v7action.ProcessInstance{
+										{
 											Index: 2,
 											State: constant.ProcessInstanceRunning,
 										},
@@ -232,7 +232,7 @@ var _ = Describe("app summary displayer", func() {
 									},
 									Sidecars: []resources.Sidecar{},
 									InstanceDetails: []v7action.ProcessInstance{
-										v7action.ProcessInstance{
+										{
 											Index:        0,
 											State:        constant.ProcessInstanceRunning,
 											LogRate:      1024,
@@ -270,7 +270,7 @@ var _ = Describe("app summary displayer", func() {
 									},
 									Sidecars: []resources.Sidecar{},
 									InstanceDetails: []v7action.ProcessInstance{
-										v7action.ProcessInstance{
+										{
 											Index:          0,
 											State:          constant.ProcessInstanceRunning,
 											CPUEntitlement: types.NullFloat64{Value: 0.50, IsSet: true},
@@ -694,7 +694,7 @@ var _ = Describe("app summary displayer", func() {
 
 		When("there is an active deployment", func() {
 			var LastStatusChangeTimeString = "2024-07-29T17:32:29Z"
-			var dateTimeRegexPattern = `[a-zA-Z]{3}\s\d{2}\s[a-zA-Z]{3}\s\d{2}\:\d{2}\:\d{2}\s[A-Z]{3}\s\d{4}`
+			var dateTimeRegexPattern = `[a-zA-Z]{3}\s\d{2}\s[a-zA-Z]{3}\s\d{2}\:\d{2}\:\d{2}\s[A-Z]{3,4}\s\d{4}`
 			var maxInFlightDefaultValue = 1
 
 			When("the deployment strategy is rolling", func() {

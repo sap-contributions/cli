@@ -10,6 +10,7 @@ import (
 	"code.cloudfoundry.org/cli/actor/v7action"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/command/commandfakes"
+	"code.cloudfoundry.org/cli/command/flag"
 	. "code.cloudfoundry.org/cli/command/v7"
 	"code.cloudfoundry.org/cli/command/v7/v7fakes"
 	"code.cloudfoundry.org/cli/util/configv3"
@@ -84,11 +85,13 @@ var _ = Describe("buildpacks Command", func() {
 		When("the --labels flag is used", func() {
 			BeforeEach(func() {
 				cmd.Labels = "some-label-selector"
+				cmd.Lifecycle = flag.Lifecycle{Value: constant.AppLifecycleTypeBuildpack}
 			})
 
 			It("passes the label selector to the actor", func() {
-				labelSelector := fakeActor.GetBuildpacksArgsForCall(0)
+				labelSelector, lifecycle := fakeActor.GetBuildpacksArgsForCall(0)
 				Expect(labelSelector).To(Equal("some-label-selector"))
+				Expect(lifecycle).To(Equal(constant.AppLifecycleTypeBuildpack))
 			})
 		})
 
@@ -111,15 +114,15 @@ var _ = Describe("buildpacks Command", func() {
 				BeforeEach(func() {
 					buildpacks := []resources.Buildpack{
 						{
-							Name:     "buildpack-1",
-							Position: types.NullInt{Value: 1, IsSet: true},
-							Enabled:  types.NullBool{Value: true, IsSet: true},
-							Locked:   types.NullBool{Value: false, IsSet: true},
-							State:    constant.BuildpackReady,
-							Filename: "buildpack-1.file",
-							Stack:    "buildpack-1-stack",
+							Name:      "buildpack-1",
+							Position:  types.NullInt{Value: 1, IsSet: true},
+							Enabled:   types.NullBool{Value: true, IsSet: true},
+							Locked:    types.NullBool{Value: false, IsSet: true},
+							State:     constant.BuildpackReady,
+							Filename:  "buildpack-1.file",
+							Stack:     "buildpack-1-stack",
+							Lifecycle: constant.AppLifecycleTypeBuildpack,
 						},
-
 						{
 							Name:     "buildpack-2",
 							Position: types.NullInt{Value: 2, IsSet: true},
@@ -136,9 +139,9 @@ var _ = Describe("buildpacks Command", func() {
 					Expect(executeErr).NotTo(HaveOccurred())
 					Expect(testUI.Err).To(Say("some-warning-1"))
 					Expect(testUI.Err).To(Say("some-warning-2"))
-					Expect(testUI.Out).To(Say(`position\s+name\s+stack\s+enabled\s+locked\s+state\s+filename`))
-					Expect(testUI.Out).To(Say(`1\s+buildpack-1\s+buildpack-1-stack\s+true\s+false\s+READY\s+buildpack-1.file`))
-					Expect(testUI.Out).To(Say(`2\s+buildpack-2\s+false\s+true\s+AWAITING_UPLOAD\s+buildpack-2.file`))
+					Expect(testUI.Out).To(Say(`position\s+name\s+stack\s+enabled\s+locked\s+state\s+lifecycle\s+filename`))
+					Expect(testUI.Out).To(Say(`1\s+buildpack-1\s+buildpack-1-stack\s+true\s+false\s+READY\s+buildpack\s+buildpack-1.file`))
+					Expect(testUI.Out).To(Say(`2\s+buildpack-2\s+false\s+true\s+AWAITING_UPLOAD\s+\s+buildpack-2.file`))
 				})
 			})
 			When("there are no buildpacks", func() {

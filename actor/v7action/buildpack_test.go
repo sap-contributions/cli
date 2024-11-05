@@ -12,6 +12,7 @@ import (
 	"code.cloudfoundry.org/cli/actor/v7action/v7actionfakes"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/resources"
 	"code.cloudfoundry.org/cli/types"
 	. "github.com/onsi/ginkgo/v2"
@@ -32,13 +33,14 @@ var _ = Describe("Buildpack", func() {
 		var (
 			buildpackName  = "buildpack-1"
 			buildpackStack = "stack-name"
+			lifecycle      = constant.AppLifecycleTypeBuildpack
 			buildpack      resources.Buildpack
 			warnings       Warnings
 			executeErr     error
 		)
 
 		JustBeforeEach(func() {
-			buildpack, warnings, executeErr = actor.GetBuildpackByNameAndStack(buildpackName, buildpackStack)
+			buildpack, warnings, executeErr = actor.GetBuildpackByNameAndStack(buildpackName, buildpackStack, lifecycle)
 		})
 
 		When("getting buildpacks fails", func() {
@@ -64,6 +66,10 @@ var _ = Describe("Buildpack", func() {
 					ccv3.Query{
 						Key:    ccv3.StackFilter,
 						Values: []string{buildpackStack},
+					},
+					ccv3.Query{
+						Key:    ccv3.LifecycleFilter,
+						Values: []string{string(constant.AppLifecycleTypeBuildpack)},
 					},
 				))
 			})
@@ -120,7 +126,7 @@ var _ = Describe("Buildpack", func() {
 			})
 
 			It("returns warnings and a BuildpackNotFoundError", func() {
-				Expect(executeErr).To(MatchError(actionerror.BuildpackNotFoundError{BuildpackName: buildpackName, StackName: buildpackStack}))
+				Expect(executeErr).To(MatchError(actionerror.BuildpackNotFoundError{BuildpackName: buildpackName, StackName: buildpackStack, Lifecycle: constant.AppLifecycleTypeBuildpack}))
 				Expect(warnings).To(ConsistOf("some-warning-1", "some-warning-2"))
 			})
 		})
@@ -151,6 +157,10 @@ var _ = Describe("Buildpack", func() {
 						ccv3.Query{
 							Key:    ccv3.NameFilter,
 							Values: []string{buildpackName},
+						},
+						ccv3.Query{
+							Key:    ccv3.LifecycleFilter,
+							Values: []string{string(constant.AppLifecycleTypeBuildpack)},
 						},
 					))
 				})
@@ -186,6 +196,10 @@ var _ = Describe("Buildpack", func() {
 							Key:    ccv3.StackFilter,
 							Values: []string{buildpackStack},
 						},
+						ccv3.Query{
+							Key:    ccv3.LifecycleFilter,
+							Values: []string{string(constant.AppLifecycleTypeBuildpack)},
+						},
 					))
 				})
 			})
@@ -194,6 +208,7 @@ var _ = Describe("Buildpack", func() {
 
 	Describe("GetBuildpacks", func() {
 		var (
+			lifecycle     = constant.AppLifecycleTypeBuildpack
 			buildpacks    []resources.Buildpack
 			warnings      Warnings
 			executeErr    error
@@ -201,7 +216,7 @@ var _ = Describe("Buildpack", func() {
 		)
 
 		JustBeforeEach(func() {
-			buildpacks, warnings, executeErr = actor.GetBuildpacks(labelSelector)
+			buildpacks, warnings, executeErr = actor.GetBuildpacks(labelSelector, lifecycle)
 		})
 
 		It("calls CloudControllerClient.GetBuildpacks()", func() {
@@ -213,7 +228,16 @@ var _ = Describe("Buildpack", func() {
 				labelSelector = ""
 			})
 			It("only passes through a OrderBy query to the CloudControllerClient", func() {
-				positionQuery := ccv3.Query{Key: ccv3.OrderBy, Values: []string{ccv3.PositionOrder}}
+				positionQuery := []ccv3.Query{
+					{
+						Key:    ccv3.OrderBy,
+						Values: []string{ccv3.PositionOrder},
+					},
+					{
+						Key:    ccv3.LifecycleFilter,
+						Values: []string{string(constant.AppLifecycleTypeBuildpack)},
+					},
+				}
 				Expect(fakeCloudControllerClient.GetBuildpacksArgsForCall(0)).To(ConsistOf(positionQuery))
 			})
 		})
@@ -319,9 +343,11 @@ var _ = Describe("Buildpack", func() {
 	Describe("UpdateBuildpackByNameAndStack", func() {
 		var (
 			buildpackName  = "my-buildpack"
-			buildpackStack = "my-stack"
+			buildpackStack = "my-stac"
+			lifecycle      = constant.AppLifecycleTypeBuildpack
 			buildpack      = resources.Buildpack{
-				Stack: "new-stack",
+				Stack:     "new-stack",
+				Lifecycle: lifecycle,
 			}
 
 			retBuildpack resources.Buildpack
@@ -336,8 +362,8 @@ var _ = Describe("Buildpack", func() {
 		When("it is successful", func() {
 			var updatedBuildpack resources.Buildpack
 			BeforeEach(func() {
-				foundBuildpack := resources.Buildpack{GUID: "a guid", Stack: ""}
-				updatedBuildpack = resources.Buildpack{GUID: "a guid", Stack: "new-stack"}
+				foundBuildpack := resources.Buildpack{GUID: "a guid", Stack: "", Lifecycle: constant.AppLifecycleTypeBuildpack}
+				updatedBuildpack = resources.Buildpack{GUID: "a guid", Stack: "new-stack", Lifecycle: constant.AppLifecycleTypeBuildpack}
 				fakeCloudControllerClient.GetBuildpacksReturns([]resources.Buildpack{foundBuildpack}, ccv3.Warnings{"warning-1"}, nil)
 				fakeCloudControllerClient.UpdateBuildpackReturns(resources.Buildpack(updatedBuildpack), ccv3.Warnings{"warning-2"}, nil)
 			})
@@ -357,12 +383,17 @@ var _ = Describe("Buildpack", func() {
 						Key:    ccv3.StackFilter,
 						Values: []string{buildpackStack},
 					},
+					ccv3.Query{
+						Key:    ccv3.LifecycleFilter,
+						Values: []string{string(constant.AppLifecycleTypeBuildpack)},
+					},
 				))
 
 				paramBuildpack := fakeCloudControllerClient.UpdateBuildpackArgsForCall(0)
 				Expect(paramBuildpack).To(Equal(resources.Buildpack{
-					GUID:  "a guid",
-					Stack: "new-stack",
+					GUID:      "a guid",
+					Stack:     "new-stack",
+					Lifecycle: constant.AppLifecycleTypeBuildpack,
 				}))
 			})
 		})
@@ -637,12 +668,13 @@ var _ = Describe("Buildpack", func() {
 			buildpackStack = "buildpack-stack"
 			buildpackGUID  = "buildpack-guid"
 			jobURL         = "buildpack-delete-job-url"
+			lifecycle      = constant.AppLifecycleTypeBuildpack
 			warnings       Warnings
 			executeErr     error
 		)
 
 		JustBeforeEach(func() {
-			warnings, executeErr = actor.DeleteBuildpackByNameAndStack(buildpackName, buildpackStack)
+			warnings, executeErr = actor.DeleteBuildpackByNameAndStack(buildpackName, buildpackStack, lifecycle)
 		})
 
 		When("getting the buildpack fails", func() {
@@ -665,6 +697,10 @@ var _ = Describe("Buildpack", func() {
 					ccv3.Query{
 						Key:    ccv3.StackFilter,
 						Values: []string{buildpackStack},
+					},
+					ccv3.Query{
+						Key:    ccv3.LifecycleFilter,
+						Values: []string{string(constant.AppLifecycleTypeBuildpack)},
 					},
 				))
 			})
