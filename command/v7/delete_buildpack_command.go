@@ -14,7 +14,7 @@ type DeleteBuildpackCommand struct {
 	relatedCommands interface{}        `related_commands:"buildpacks"`
 	Force           bool               `long:"force" short:"f" description:"Force deletion without confirmation"`
 	Stack           string             `long:"stack" short:"s" description:"Specify stack to disambiguate buildpacks with the same name. Required when buildpack name is ambiguous"`
-	Lifecycle       flag.AppType       `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
+	Lifecycle       flag.Lifecycle     `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
 }
 
 func (cmd DeleteBuildpackCommand) Execute(args []string) error {

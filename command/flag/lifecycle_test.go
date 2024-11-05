@@ -7,13 +7,13 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AppType", func() {
-	var appType AppType
+var _ = Describe("Lifecycle", func() {
+	var lifecycle Lifecycle
 
 	Describe("Complete", func() {
 		DescribeTable("returns list of completions",
 			func(prefix string, matches []flags.Completion) {
-				completions := appType.Complete(prefix)
+				completions := lifecycle.Complete(prefix)
 				Expect(completions).To(Equal(matches))
 			},
 

@@ -5,10 +5,10 @@ import (
 	flags "github.com/jessevdk/go-flags"
 )
 
-type AppType struct {
+type Lifecycle struct {
 	Value constant.AppLifecycleType
 }
 
-func (AppType) Complete(prefix string) []flags.Completion {
+func (Lifecycle) Complete(prefix string) []flags.Completion {
 	return completions([]string{string(constant.AppLifecycleTypeBuildpack), string(constant.AppLifecycleTypeCNB), string(constant.AppLifecycleTypeDocker)}, prefix, false)
 }

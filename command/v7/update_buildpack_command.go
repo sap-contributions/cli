@@ -39,7 +39,7 @@ type UpdateBuildpackCommand struct {
 	NewName         string                           `long:"rename" description:"Rename an existing buildpack"`
 	CurrentStack    string                           `long:"stack" short:"s" description:"Specify stack to disambiguate buildpacks with the same name"`
 	Unlock          bool                             `long:"unlock" description:"Unlock the buildpack to enable updates"`
-	Lifecycle       flag.AppType                     `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
+	Lifecycle       flag.Lifecycle                   `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Buildpack lifecycle" default:"buildpack"`
 
 	ProgressBar v7action.SimpleProgressBar
 }

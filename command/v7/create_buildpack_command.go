@@ -22,7 +22,7 @@ type CreateBuildpackCommand struct {
 	usage           interface{}              `usage:"CF_NAME create-buildpack BUILDPACK PATH POSITION [--disable]\n\nTIP:\n   Path should be a zip file, a url to a zip file, or a local directory. Position is a positive integer, sets priority, and is sorted from lowest to highest."`
 	relatedCommands interface{}              `related_commands:"buildpacks, push"`
 	Disable         bool                     `long:"disable" description:"Disable the buildpack from being used for staging"`
-	Lifecycle       flag.AppType             `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Lifecycle type" default:"buildpack"`
+	Lifecycle       flag.Lifecycle           `long:"lifecycle" choice:"buildpack" choice:"cnb" description:"Lifecycle type" default:"buildpack"`
 
 	ProgressBar v7action.SimpleProgressBar
 }
