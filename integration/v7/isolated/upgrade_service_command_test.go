@@ -151,9 +151,9 @@ var _ = Describe("upgrade-service command", func() {
 					Expect(session.Out).To(SatisfyAll(
 						Say(`Upgrading service instance %s in org %s / space %s as %s\.\.\.\n`, serviceInstanceName, orgName, spaceName, username),
 						Say(`\n`),
-						Say(`Waiting for the operation to complete\.+\n`),
+						Say(`Waiting for the operation to complete\n\.+`),
 						Say(`\n`),
-						Say(`Upgrade of service instance %s complete\.\n`, serviceInstanceName),
+						Say(`Upgrade of service instance %s complete\n\.\n`, serviceInstanceName),
 						Say(`OK\n`),
 					))
 				})
